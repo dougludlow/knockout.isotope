@@ -45,11 +45,16 @@
     function afterAdd(node, index, item) {
         if (node.nodeType === 1) { // If this is an html element...
             var $elem = $(node);
-            //$container.isotope('reloadItems').isotope({ sortBy: 'original-order' }); // prepend
 
-            $container.isotope('appended', $elem, function () { // append
-                $container.isotope('reloadItems').isotope({ sortBy: 'original-order' }).isotope('reLayout');
-            })
+            //$container.imagesLoaded(function () {
+            //    $container.isotope('reloadItems').isotope({ sortBy: 'original-order' }); // prepend
+            //});
+
+            $container.imagesLoaded(function () {
+                $container.isotope('appended', $elem, function () { // append
+                    $container.isotope('reloadItems').isotope({ sortBy: 'original-order' }).isotope('reLayout');
+                });
+            });
         }
     }
 
