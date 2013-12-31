@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Knockout Isotope Binding Demo</title>
+    <style>
+        * {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #eee;
+        }
+
+        #container {
+            margin: 0 auto;
+            width: 1025px;
+            min-height: 500px;
+            background: #fff;
+        }
+
+        .item {
+            width: 500px;
+            background: #666;
+            border: 1px solid #000;
+            margin-bottom: 25px;
+        }
+
+            .item.empty {
+                display: none;
+                border: 0;
+                margin-bottom: 0;
+            }
+
+        /**** Isotope Filtering ****/
+
+        .isotope-item {
+            z-index: 2;
+        }
+
+        .isotope-hidden.isotope-item {
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /**** Isotope CSS3 transitions ****/
+
+        .isotope,
+        .isotope .isotope-item {
+            -webkit-transition-duration: 0.8s;
+            -moz-transition-duration: 0.8s;
+            -ms-transition-duration: 0.8s;
+            -o-transition-duration: 0.8s;
+            transition-duration: 0.8s;
+        }
+
+        .isotope {
+            -webkit-transition-property: height, width;
+            -moz-transition-property: height, width;
+            -ms-transition-property: height, width;
+            -o-transition-property: height, width;
+            transition-property: height, width;
+        }
+
+            .isotope .isotope-item {
+                -webkit-transition-property: -webkit-transform, opacity;
+                -moz-transition-property: -moz-transform, opacity;
+                -ms-transition-property: -ms-transform, opacity;
+                -o-transition-property: -o-transform, opacity;
+                transition-property: transform, opacity;
+            }
+
+                /**** disabling Isotope CSS3 transitions ****/
+
+                .isotope.no-transition,
+                .isotope.no-transition .isotope-item,
+                .isotope .isotope-item.no-transition {
+                    -webkit-transition-duration: 0s;
+                    -moz-transition-duration: 0s;
+                    -ms-transition-duration: 0s;
+                    -o-transition-duration: 0s;
+                    transition-duration: 0s;
+                }
+    </style>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.7.1/modernizr.dev.js"></script>
+</head>
+<body>
+    <div id="container" data-bind="isotope: { data: items, options: options }">
+        <div class="item empty" data-bind="text: $data, css: { empty: !$parent.items().length }, style: { height: $root.getRandomInt(200,500) + 'px' }"></div>
+    </div>
+
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/knockout/3.0.0/knockout-debug.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/1.5.25/jquery.isotope.js"></script>
+    <script src="src/knockout.isotope.js"></script>
+    <script>
+        $(function () {
+
+            var vm = new DemoViewModel(),
+                items = [1, 0, 2, 3, 4, 5, 6, 7, 8, 9];
+
+            ko.applyBindings(vm);
+            vm.items(items);
+
+            vm.items.push(10);
+            vm.items.push(11);
+
+            var $container = $('#container');
+
+            setTimeout(function () {
+                $container.isotope('shuffle');
+            }, 1000);
+
+            setTimeout(function () {
+                $container.isotope({ sortBy: 'original-order' });
+            }, 2000);
+        });
+
+        function DemoViewModel() {
+            var self = this;
+
+            self.items = ko.observableArray([]);
+            self.options = {
+                itemSelector: '.item',
+                masonry: {
+                    columnWidth: 500,
+                    gutterWidth: 25,
+                }
+            };
+
+            self.getRandomInt = function (min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            };
+        }
+    </script>
+</body>
+</html>
