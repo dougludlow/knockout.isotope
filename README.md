@@ -29,27 +29,27 @@ A KnockoutJS binding for Isotope
 ### Example View Model
 
 ```javascript
-  $(function () {
-    
-      var vm = new ExampleViewModel(),
-          items = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+$(function () {
 
-      ko.applyBindings(vm);
-      vm.items(items);
-  });
+  var vm = new ExampleViewModel(),
+      items = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-  function ExampleViewModel() {
-      var self = this;
+  ko.applyBindings(vm);
+  vm.items(items);
+});
 
-      self.items = ko.observableArray([]);
-      self.options = {
-          itemSelector: '.item',
-          masonry: {
-              columnWidth: 500,
-              gutterWidth: 25,
-          }
-      };
-  }
+function ExampleViewModel() {
+  var self = this;
+
+  self.items = ko.observableArray([]);
+  self.options = {
+      itemSelector: '.item',
+      masonry: {
+          columnWidth: 500,
+          gutterWidth: 25,
+      }
+  };
+}
 ```
     
 ## Options
