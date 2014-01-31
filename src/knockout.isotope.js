@@ -3,7 +3,9 @@
 
     var $container,
         initialized,
-        isotopeOptions;
+        imagesLoaded,
+        isotopeOptions,
+        indexKey = '__cob-knockout-isotope-index';
 
     // Modified Isotope methods for gutters in masonry:
     $.Isotope.prototype._getMasonryGutterColumns = function () {
@@ -42,19 +44,31 @@
         return (this.masonry.cols !== prevSegments);
     };
 
+    function afterRender(nodes, data) {
+        var $elems = $(nodes).filter(function () { return this.nodeType === 1 });
+        $elems.addClass('no-transition');
+        $elems.css($.Isotope.settings.hiddenStyle);
+    }
+
     function afterAdd(node, index, item) {
         if (node.nodeType === 1) { // If this is an html element...
-            var $elem = $(node);
+            var $elem = $(node),
+                addItem = function () {
+                    $elem.data(indexKey, index);
+                    $container.isotope('addItems', $elem, function () {
+                        $container.isotope().isotope('reLayout');
+                        $elem.removeClass('no-transition');
+                        $elem.css($.Isotope.settings.visibleStyle);
+                    });
+                };
 
-            //$container.imagesLoaded(function () {
-            //    $container.isotope('reloadItems').isotope({ sortBy: 'original-order' }); // prepend
-            //});
-
-            $container.imagesLoaded(function () {
-                $container.isotope('appended', $elem, function () { // append
-                    $container.isotope('reloadItems').isotope({ sortBy: 'original-order' }).isotope('reLayout');
+            if (!imagesLoaded)
+                $container.imagesLoaded(function () {
+                    addItem();
+                    imagesLoaded = true;
                 });
-            });
+            else
+                addItem();
         }
     }
 
@@ -77,17 +91,19 @@
     }
 
     ko.bindingHandlers.isotope = {
+        getSortData: function ($elem) {
+            return $elem.data(indexKey);
+        },
         makeForeachValueAccessor: function (valueAccessor) {
             return function () {
                 var modelValue = valueAccessor(),
-                    options,
-                    unwrappedValue = ko.utils.peekObservable(modelValue); // Unwrap without setting a dependency.
-
-                options = {
-                    afterAdd: afterAdd,
-                    afterMove: afterMove,
-                    beforeRemove: beforeRemove
-                };
+                    unwrappedValue = ko.utils.peekObservable(modelValue), // Unwrap without setting a dependency here
+                    options = {
+                        afterRender: afterRender,
+                        afterAdd: afterAdd,
+                        afterMove: afterMove,
+                        beforeRemove: beforeRemove
+                    };
 
                 // If unwrappedValue is the array, pass in the wrapped value on its own
                 // The value will be unwrapped and tracked within the template binding
@@ -121,27 +137,36 @@
                 if (parameters.options) {
                     var clientOptions = parameters.options;
                     if (typeof clientOptions !== 'object')
-                        throw new Error('options callback must return object');
+                        throw new Error('options must be an object');
                     ko.utils.extend(isotopeOptions, clientOptions);
                 }
             }
 
-            return ko.bindingHandlers.foreach.init(element, ko.bindingHandlers.isotope.makeForeachValueAccessor(valueAccessor), allBindingsAccessor, viewModel, bindingContext);
+            ko.bindingHandlers.foreach.init(element, ko.bindingHandlers.isotope.makeForeachValueAccessor(valueAccessor), allBindingsAccessor, viewModel, bindingContext);
+
+            return { controlsDescendantBindings: true };
         },
         update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
 
-            var result = ko.bindingHandlers.foreach.update(element, ko.bindingHandlers.isotope.makeForeachValueAccessor(valueAccessor), allBindingsAccessor, viewModel, bindingContext);
-
-            if (!initialized)
-                $container.isotope(isotopeOptions);
-            else
-                $container.isotope().isotope('reloadItems');
+            ko.bindingHandlers.foreach.update(element, ko.bindingHandlers.isotope.makeForeachValueAccessor(valueAccessor), allBindingsAccessor, viewModel, bindingContext);
 
             var data = ko.bindingHandlers.isotope.makeForeachValueAccessor(valueAccessor)().foreach;
             ko.utils.unwrapObservable(data);
 
+            if (!initialized) {
+                ko.utils.extend(isotopeOptions, {
+                    getSortData: {
+                        index: ko.bindingHandlers.isotope.getSortData
+                    }
+                });
+
+                $container.isotope(isotopeOptions);
+            }
+            else
+                $container.isotope();
+
             initialized = true;
-            return result;
+            return { controlsDescendantBindings: true };
         }
     };
 })(window.jQuery, window.ko);
