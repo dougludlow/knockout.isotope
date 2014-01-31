@@ -5,7 +5,7 @@
         initialized,
         imagesLoaded,
         isotopeOptions,
-        indexKey = '__cob-knockout-isotope-index';
+        indexKey = '__knockout-isotope-index';
 
     // Modified Isotope methods for gutters in masonry:
     $.Isotope.prototype._getMasonryGutterColumns = function () {
@@ -19,7 +19,6 @@
                       containerWidth;
 
         this.masonry.columnWidth += gutter;
-
         this.masonry.cols = Math.floor((containerWidth + gutter) / this.masonry.columnWidth);
         this.masonry.cols = Math.max(this.masonry.cols, 1);
     };
