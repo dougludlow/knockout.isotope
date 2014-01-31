@@ -1,7 +1,11 @@
 knockout.isotope
 ================
 
-A KnockoutJS binding for Isotope
+A KnockoutJS binding for Isotope.
+
+## Demo
+
+See a [working demo](http://jsfiddle.net/dludlow/MCsGx/) on JSFiddle.
 
 
 ## Requirements
