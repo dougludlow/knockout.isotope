@@ -82,10 +82,12 @@
                 isotopeInstance = $container.data('isotope');
 
             isotopeInstance.$allAtoms = isotopeInstance.$allAtoms.not($elem);
-            $elem.remove();
-            $container.isotope('reLayout');
+            isotopeInstance.$filteredAtoms = isotopeInstance.$filteredAtoms.not($elem);
 
-            //$container.isotope('remove', $elem); // not working... 
+            $elem.css($container.data('isotope').options.hiddenStyle);
+            $container.isotope('reLayout', function () {
+                $elem.remove();
+            });
         }
     }
 
