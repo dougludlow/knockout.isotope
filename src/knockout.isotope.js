@@ -13,10 +13,10 @@
             containerWidth = this.element.width();
 
         this.masonry.columnWidth = this.options.masonry && this.options.masonry.columnWidth ||
-                      // or use the size of the first item
-                      this.$filteredAtoms.outerWidth(true) ||
-                      // if there's no items, use size of container
-                      containerWidth;
+            // or use the size of the first item
+            this.$filteredAtoms.outerWidth(true) ||
+            // if there's no items, use size of container
+            containerWidth;
 
         this.masonry.columnWidth += gutter;
         this.masonry.cols = Math.floor((containerWidth + gutter) / this.masonry.columnWidth);
@@ -46,7 +46,7 @@
     function afterRender(nodes, data) {
         var $elems = $(nodes).filter(function () { return this.nodeType === 1 });
         $elems.addClass('no-transition');
-        $elems.css($.Isotope.settings.hiddenStyle);
+        $elems.css($container.data('isotope').options.hiddenStyle);
     }
 
     function afterAdd(node, index, item) {
@@ -57,7 +57,7 @@
                     $container.isotope('addItems', $elem, function () {
                         $container.isotope().isotope('reLayout');
                         $elem.removeClass('no-transition');
-                        $elem.css($.Isotope.settings.visibleStyle);
+                        $elem.css($container.data('isotope').options.visibleStyle);
                     });
                 };
 
@@ -137,7 +137,7 @@
                     var clientOptions = parameters.options;
                     if (typeof clientOptions !== 'object')
                         throw new Error('options must be an object');
-                    ko.utils.extend(isotopeOptions, clientOptions);
+                    $.extend(true, isotopeOptions, clientOptions);
                 }
             }
 
@@ -153,7 +153,7 @@
             ko.utils.unwrapObservable(data);
 
             if (!initialized) {
-                ko.utils.extend(isotopeOptions, {
+                $.extend(true, isotopeOptions, {
                     getSortData: {
                         index: ko.bindingHandlers.isotope.getSortData
                     }
