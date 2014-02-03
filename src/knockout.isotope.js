@@ -83,8 +83,9 @@
 
             isotopeInstance.$allAtoms = isotopeInstance.$allAtoms.not($elem);
             isotopeInstance.$filteredAtoms = isotopeInstance.$filteredAtoms.not($elem);
+            isotopeInstance.styleQueue.push({ $el: $elem, style: isotopeInstance.options.hiddenStyle });
 
-            $elem.css($container.data('isotope').options.hiddenStyle);
+            //isotopeInstance._sort(); // dies for some reason... "$.data(...) is undefined" - jquery.isotope.js (line 587)
             $container.isotope('reLayout', function () {
                 $elem.remove();
             });
