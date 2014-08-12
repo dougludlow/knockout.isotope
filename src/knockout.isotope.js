@@ -153,7 +153,7 @@
 
             ko.bindingHandlers.foreach.update(element, ko.bindingHandlers.isotope.makeForeachValueAccessor(valueAccessor), allBindingsAccessor, viewModel, bindingContext);
 
-            var data = ko.bindingHandlers.isotope.makeForeachValueAccessor(valueAccessor)().foreach;
+            var data = ko.bindingHandlers.isotope.makeForeachValueAccessor(valueAccessor)().data;
             ko.utils.unwrapObservable(data);
 
             if (!initialized) {
